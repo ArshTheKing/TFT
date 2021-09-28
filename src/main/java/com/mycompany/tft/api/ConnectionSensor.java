@@ -25,18 +25,16 @@ import javax.microedition.io.StreamConnectionNotifier;
 public class ConnectionSensor extends Thread{
     
     private static final String myServiceName = "MyBtService";
-    
+    private final StreamConnectionNotifier notifier;
+
+    public ConnectionSensor(StreamConnectionNotifier notifier) {
+        this.notifier=notifier;
+    }   
     
     @Override
     public void run() {
         try {
-            LocalDevice localDevice = LocalDevice.getLocalDevice();
-            localDevice.setDiscoverable(DiscoveryAgent.GIAC);
-            StreamConnectionNotifier streamConnectionNotifier;
-            String connURL = "btspp://localhost:"+"7f49f6fa12e511ec82a80242ac130003"+
-                    ";name="+myServiceName;
-            streamConnectionNotifier = (StreamConnectionNotifier) Connector.open(connURL);
-            StreamConnection sc = streamConnectionNotifier.acceptAndOpen();
+            StreamConnection sc = notifier.acceptAndOpen();
             RemoteDevice rd = RemoteDevice.getRemoteDevice(sc);
             InputStream stream = sc.openInputStream();
             Control.getInstance().setConnection(rd,stream);
@@ -46,5 +44,6 @@ public class ConnectionSensor extends Thread{
             Logger.getLogger(ConnectionSensor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     
 }

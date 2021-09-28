@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
+import javax.microedition.io.StreamConnectionNotifier;
 import javax.swing.JOptionPane;
 
 /**
@@ -38,13 +39,14 @@ public class Control {
     private RemoteDevice key;
     private InputStream connection;
     private DataSensor dataSensor;
+    private final StreamConnectionNotifier btNotifier;
     
     private Control(){
         this.myself=this;
         ui=new MainFrame(this);
         ui.setEnabled(false);
         getLocalName();
-        ui.setEnabled(true);
+        btNotifier = ExtraMethods.getBTNotifier();
         try {
             dev=FileHandler.readDevice();
             params= FileHandler.readConfig();
@@ -52,6 +54,7 @@ public class Control {
         } catch (IOException ex) {
             System.out.println("Error al leer los archivos");
         }
+        ui.setEnabled(true);
         
     }
     
@@ -74,7 +77,7 @@ public class Control {
         Linking linking= Linking.getIntance();
         linking.setLocationRelativeTo(ui);
         linking.setAlwaysOnTop(true);
-        ConnectionSensor sensor = new ConnectionSensor();
+        ConnectionSensor sensor = new ConnectionSensor(btNotifier);
         sensor.start();
         try {
             sensor.join(1000*60);
@@ -212,6 +215,20 @@ public class Control {
     }
 
     public void cleanConnection() {
+        rebootSensor();
+        ui.setStatusTag(null, false);
+        ui.setKeyDeviceTag("Unknow");
+        searchDevice();
+        
+        //TODO 
+        //DataSensor.getInstance().setEnable(false);
+    }
+    public void reconnectConnection() {
+        rebootSensor();
+        ui.setStatusTag(null, true);
+        ui.setKeyDeviceTag("Reconnecting");
+        searchDevice();
+        
         //TODO 
         //DataSensor.getInstance().setEnable(false);
     }
@@ -219,7 +236,6 @@ public class Control {
     public void rebootSensor() {
         ui.dispose();
         ui=new MainFrame(this);
-        new Control();
     }
 
 

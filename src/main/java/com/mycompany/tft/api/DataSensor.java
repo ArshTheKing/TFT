@@ -61,18 +61,17 @@ public class DataSensor extends Thread{
                 byte[] b= new byte[1024];
                 int read = deviceStream.read(b,0,4);
                 String data= new String(b);
-                if(data.contentEquals("exit")) {
-                    action.actuate();
-                    sleep();
-                    continue;
-                }
-                if(read==-1) disconected();
-                else{
-                    Float tmp = Float.parseFloat(data);
-                    System.out.println(data);
-                    if (tmp!=batteryLvl) {
-                        batteryLvl=tmp;
-                        Control.getInstance().updateBattery((int) batteryLvl);
+                if(data.contains("exit")) {
+                    disconected();
+                }else{
+                    if(read==-1) throwActuator();
+                    else{
+                        Float tmp = Float.parseFloat(data);
+                        System.out.println(data);
+                        if (tmp!=batteryLvl) {
+                            batteryLvl=tmp;
+                            Control.getInstance().updateBattery((int) batteryLvl);
+                        }
                     }
                 }
             }
@@ -94,9 +93,11 @@ public class DataSensor extends Thread{
         }
     }
 
-    private void disconected() {
+    private void throwActuator() {
+        batteryLvl=-1;
+        Control.getInstance().cleanConnection();
         if(enable){
-            action.actuate();
+            //action.actuate();
             this.sleep();
         }
     }
@@ -106,5 +107,10 @@ public class DataSensor extends Thread{
     }
 
     public void end(){
+    }
+
+    private void disconected() {
+        Control.getInstance().cleanConnection();
+        this.sleep();
     }
 }
