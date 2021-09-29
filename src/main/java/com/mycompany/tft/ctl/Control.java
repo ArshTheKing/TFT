@@ -217,15 +217,14 @@ public class Control {
     public void cleanConnection() {
         rebootSensor();
         ui.setStatusTag(null, false);
-        ui.setKeyDeviceTag("Unknow");
-        searchDevice();
+        ui.setKeyDeviceTag("Ninguno");
         
         //TODO 
         //DataSensor.getInstance().setEnable(false);
     }
     public void reconnectConnection() {
         rebootSensor();
-        ui.setStatusTag(null, true);
+        ui.setStatusTag(null, false);
         ui.setKeyDeviceTag("Reconnecting");
         searchDevice();
         

@@ -69,8 +69,7 @@ public class LockScreen {
 
             private void unlock() {
                 frame.dispose();
-                Control.getInstance().enableUI();
-                Control.getInstance().rebootSensor();
+                Control.getInstance().reconnectConnection();
             }
         });
         jPanel.add(verify);

@@ -27,6 +27,7 @@ public class DataSensor extends Thread{
     private float batteryLvl;
     private int mode;
     private boolean enable;
+    private Thread actionThread;
 
     public DataSensor(int actuator) {
         super();
@@ -95,9 +96,9 @@ public class DataSensor extends Thread{
 
     private void throwActuator() {
         batteryLvl=-1;
-        Control.getInstance().cleanConnection();
+        Control.getInstance().reconnectConnection();
         if(enable){
-            //action.actuate();
+            //actuate();
             this.sleep();
         }
     }
@@ -113,4 +114,17 @@ public class DataSensor extends Thread{
         Control.getInstance().cleanConnection();
         this.sleep();
     }
+
+    private void actuate() {
+        actionThread= new Thread(){
+            @Override
+            public void run() {
+                action.actuate();
+            }
+            
+        };
+    }
+
+    
+    
 }
