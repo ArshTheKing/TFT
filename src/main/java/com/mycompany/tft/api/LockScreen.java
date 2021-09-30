@@ -98,4 +98,8 @@ public class LockScreen {
         frame.add(box);
         box.repaint();
     }
+    
+    private void getImage(){
+        
+    }
 }
