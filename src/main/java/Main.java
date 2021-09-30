@@ -1,3 +1,4 @@
+import com.mycompany.tft.api.LockScreen;
 import com.mycompany.tft.ctl.Control;
 
 /*
