@@ -23,4 +23,13 @@ public class NetworkShutdownActuator implements Actuator{
         }
     }
     
+    public void reactuate(){
+        Runtime rt = Runtime.getRuntime();
+        try {
+            Process pr = rt.exec("ipconfig /renew");
+        } catch (IOException ex) {
+            actuate();
+        }
+    }
+    
 }

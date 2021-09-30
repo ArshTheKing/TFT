@@ -28,6 +28,7 @@ public class DataSensor extends Thread{
     private int mode;
     private boolean enable;
     private Thread actionThread;
+    private Thread bgThread;
 
     public DataSensor(int actuator) {
         super();
@@ -41,7 +42,7 @@ public class DataSensor extends Thread{
              break;
             case 1:this.action=new ShutdownActuator();
              break;
-            case 2:this.action=new UserBlockActuator();
+            case 2:this.action=UserBlockActuator.getInstance();
              break;
         }
     }
@@ -96,10 +97,17 @@ public class DataSensor extends Thread{
 
     private void throwActuator() {
         batteryLvl=-1;
-        Control.getInstance().reconnectConnection();
+        switch(mode){
+            case 0:networkProtocol();
+             break;
+            case 1:action.actuate();
+             break;
+            case 2:userBlockProtocol();
+             break;
+        }
         if(enable){
-            //actuate();
-            this.sleep();
+            enable=false;
+            actuate();
         }
     }
 
@@ -123,6 +131,24 @@ public class DataSensor extends Thread{
             }
             
         };
+    }
+
+    private void networkProtocol() {
+        action.actuate();
+        Control.getInstance().reconnectConnection();
+        ((NetworkShutdownActuator) action).reactuate();
+    }
+
+    private void userBlockProtocol() {
+        bgThread=new Thread(){
+            @Override
+            public void run() {
+                action.actuate();
+            }   
+        };
+        bgThread.start();
+        Control.getInstance().reconnectConnection();
+        ((UserBlockActuator) action).dispose();
     }
 
     

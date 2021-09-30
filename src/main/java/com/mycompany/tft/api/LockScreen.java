@@ -138,4 +138,8 @@ public class LockScreen {
         form.setOpaque(false);
         return form;
     }
+
+    public void dispose() {
+        frame.dispose();
+    }
 }

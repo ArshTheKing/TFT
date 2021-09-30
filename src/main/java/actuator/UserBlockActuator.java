@@ -15,10 +15,24 @@ import com.mycompany.tft.objects.Params;
  */
 public class UserBlockActuator implements Actuator{
 
+    private LockScreen screen;
+    private static UserBlockActuator myself;
+    private LockScreen lockScreen;
+    
+    private UserBlockActuator(){
+        myself=this;
+    }
+    
+    public static UserBlockActuator getInstance(){
+        return (myself!=null)? myself: new UserBlockActuator();
+    }
     @Override
     public void actuate() {
         Params params=Control.getInstance().getParams();
-        LockScreen lockScreen = new LockScreen(params.getUser(),params.getPass());
+        lockScreen = new LockScreen(params.getUser(),params.getPass());
     }
     
+    public void dispose(){
+        lockScreen.dispose();
+    }
 }
