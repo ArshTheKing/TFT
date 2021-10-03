@@ -24,8 +24,6 @@ public class CustomIcon {
                 size, size, BufferedImage.TYPE_INT_RGB);
         
         Graphics2D g = i.createGraphics();
-        Image icon = Toolkit.getDefaultToolkit().getImage("images/test.png");
-        g.drawImage(icon, 0, 0, size, size, null);
         g.setColor(Color.lightGray);
         g.fillRect(0, 0, size, size);
         g.setColor(Color.BLUE);

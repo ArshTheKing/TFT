@@ -20,9 +20,8 @@ import java.util.logging.Logger;
  * @author AZAEL
  */
 public class DataSensor extends Thread{
-    private static  DataSensor myself;
     private Actuator action;
-    private boolean exit;
+    private boolean exit=false;
     private InputStream deviceStream;
     private float batteryLvl;
     private int mode;
@@ -59,14 +58,15 @@ public class DataSensor extends Thread{
 
     public void run() {
         try {
-            while(true){
+            while(!exit){
                 byte[] b= new byte[1024];
+                //TEST -> deviceStream.skip(deviceStream.available()-4);
                 int read = deviceStream.read(b,0,4);
-                String data= new String(b);
-                if(data.contains("exit")) {
-                    disconected();
-                }else{
-                    if(read==-1) throwActuator();
+                System.out.println(read);
+                if(read==-1) throwActuator();
+                else{
+                    String data= new String(b);
+                    if(data.contains("exit")) disconected();
                     else{
                         Float tmp = Float.parseFloat(data);
                         System.out.println(data);
@@ -96,6 +96,7 @@ public class DataSensor extends Thread{
     }
 
     private void throwActuator() {
+        System.out.println("Actuate");
         batteryLvl=-1;
         switch(mode){
             case 0:networkProtocol();
@@ -129,7 +130,6 @@ public class DataSensor extends Thread{
             public void run() {
                 action.actuate();
             }
-            
         };
     }
 
@@ -150,7 +150,4 @@ public class DataSensor extends Thread{
         Control.getInstance().reconnectConnection();
         ((UserBlockActuator) action).dispose();
     }
-
-    
-    
 }

@@ -11,10 +11,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
-import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
@@ -36,6 +33,7 @@ public class ConnectionSensor extends Thread{
         try {
             StreamConnection sc = notifier.acceptAndOpen();
             RemoteDevice rd = RemoteDevice.getRemoteDevice(sc);
+            System.out.println(rd.getBluetoothAddress());
             InputStream stream = sc.openInputStream();
             Control.getInstance().setConnection(rd,stream);
         } catch (BluetoothStateException ex) {

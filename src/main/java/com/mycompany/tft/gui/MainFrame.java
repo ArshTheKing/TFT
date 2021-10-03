@@ -177,7 +177,7 @@ public class MainFrame extends javax.swing.JFrame {
         new SwingWorker<Object, Object>(){
             @Override
             protected Object doInBackground() throws Exception {
-                ctl.searchDevice();
+                ctl.searchDevice(true);
                 return null;
             }
         }.execute();

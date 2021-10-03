@@ -1,4 +1,3 @@
-import com.mycompany.tft.api.LockScreen;
 import com.mycompany.tft.ctl.Control;
 
 /*
@@ -14,17 +13,5 @@ import com.mycompany.tft.ctl.Control;
 public class Main {
     public static void main(String[] args) {
         Control.getInstance();
-        
-        /*FileHandler fileHandler = new FileHandler();
-        fileHandler.writeDevice(new Device("1", "algo", "distinto"));
-        SearchCommand sC = new SearchCommand();
-        sC.setParameters(args);
-        sC.execute();
-        ArrayList<RemoteDevice> results =(ArrayList) sC.getResults();
-        for (RemoteDevice dev : results) {
-        System.out.println(dev.getFriendlyName(true)+" loacated");
-        }*/
-        
-        
     }
 }

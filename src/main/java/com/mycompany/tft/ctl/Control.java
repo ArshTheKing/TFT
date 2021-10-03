@@ -13,7 +13,6 @@ import com.mycompany.tft.api.MailSender;
 import com.mycompany.tft.gui.Config;
 import com.mycompany.tft.gui.Linking;
 import com.mycompany.tft.gui.MainFrame;
-import com.mycompany.tft.model.command.*;
 import com.mycompany.tft.objects.Device;
 import com.mycompany.tft.objects.Params;
 import java.io.IOException;
@@ -45,7 +44,7 @@ public class Control {
         this.myself=this;
         ui=new MainFrame(this);
         ui.setEnabled(false);
-        getLocalName();
+        showBTDisconnected();
         btNotifier = ExtraMethods.getBTNotifier();
         try {
             dev=FileHandler.readDevice();
@@ -71,12 +70,14 @@ public class Control {
     }
     
     
-    public void searchDevice() {
+    public void searchDevice(Boolean windown) {
         ui.setEnabled(false);
         ui.toFront();
-        Linking linking= Linking.getIntance();
-        linking.setLocationRelativeTo(ui);
-        linking.setAlwaysOnTop(true);
+        Linking linking=null;
+            linking= Linking.getIntance();
+            linking.setLocationRelativeTo(ui);
+            linking.setAlwaysOnTop(true);
+        if(!windown)linking.setVisible(false);
         ConnectionSensor sensor = new ConnectionSensor(btNotifier);
         sensor.start();
         try {
@@ -104,10 +105,10 @@ public class Control {
     }
     
     public void saveDevice(Device dev){
-       RegisterCommand rc = new RegisterCommand();
-       rc.setParameters(dev);
-       rc.execute();
-       rc.getResults();
+        try {
+            FileHandler.writeDevice(dev);
+        } catch (IOException ex) {
+        }
        this.dev.add(dev);
     }
     
@@ -118,11 +119,6 @@ public class Control {
         MailSender.getInstance().setMail(keyDevice.getMail());
     }
 
-    public void stopSensor() {
-        ui.setEnabled(false);
-        ui.setEnabled(true);
-    }
-    
     public void enableSensor(boolean b) {
         dataSensor.setEnable(b);
     }
@@ -167,10 +163,10 @@ public class Control {
         return localName;
     }
 
-
     public void showBTDisconnected() {
         while(Control.getInstance().getLocalName()==null)
             JOptionPane.showMessageDialog(ui, "Por favor active la funcionalidad bluetooth del dispositivo");
+        ui.toFront();
     }
 
     public void setConnection(RemoteDevice rd, InputStream stream) {
@@ -217,22 +213,16 @@ public class Control {
     public void cleanConnection() {
         ui.setStatusTag(null, false);
         ui.setKeyDeviceTag("Ninguno");
-        
-        //TODO 
-        //DataSensor.getInstance().setEnable(false);
     }
+    
     public void reconnectConnection() {
         ui.setStatusTag(null, false);
-        
         ui.enableSensor(false);
         ui.setKeyDeviceTag("Reconnecting");
-        searchDevice();
-        
-        //TODO 
-        //DataSensor.getInstance().setEnable(false);
+        searchDevice(false);
     }
 
-    public void rebootSensor() {
+    public void rebootUI() {
         ui.dispose();
         ui=new MainFrame(this);
     }

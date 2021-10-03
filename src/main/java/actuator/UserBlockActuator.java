@@ -15,7 +15,6 @@ import com.mycompany.tft.objects.Params;
  */
 public class UserBlockActuator implements Actuator{
 
-    private LockScreen screen;
     private static UserBlockActuator myself;
     private LockScreen lockScreen;
     
