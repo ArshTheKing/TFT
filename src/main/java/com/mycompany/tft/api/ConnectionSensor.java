@@ -31,6 +31,7 @@ public class ConnectionSensor extends Thread{
     @Override
     public void run() {
         try {
+            System.out.println("ESPERANDO CONEXION");
             StreamConnection sc = notifier.acceptAndOpen();
             RemoteDevice rd = RemoteDevice.getRemoteDevice(sc);
             System.out.println(rd.getBluetoothAddress());

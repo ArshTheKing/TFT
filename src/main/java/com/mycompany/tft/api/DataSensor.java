@@ -60,7 +60,7 @@ public class DataSensor extends Thread{
         try {
             while(!exit){
                 byte[] b= new byte[1024];
-                //TEST -> deviceStream.skip(deviceStream.available()-4);
+                deviceStream.skip(deviceStream.available()-4);
                 int read = deviceStream.read(b,0,4);
                 System.out.println(read);
                 if(read==-1) throwActuator();
@@ -91,13 +91,14 @@ public class DataSensor extends Thread{
         if(state.equals(Thread.State.NEW)) this.start();
         else {
             this.deviceStream=stream;
-            this.resume();
+            this.notify();
         }
     }
 
     private void throwActuator() {
         System.out.println("Actuate");
         batteryLvl=-1;
+        if(!enable) return;
         switch(mode){
             case 0:networkProtocol();
              break;
@@ -108,7 +109,6 @@ public class DataSensor extends Thread{
         }
         if(enable){
             enable=false;
-            actuate();
         }
     }
 
@@ -122,15 +122,6 @@ public class DataSensor extends Thread{
     private void disconected() {
         Control.getInstance().cleanConnection();
         this.sleep();
-    }
-
-    private void actuate() {
-        actionThread= new Thread(){
-            @Override
-            public void run() {
-                action.actuate();
-            }
-        };
     }
 
     private void networkProtocol() {

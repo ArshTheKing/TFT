@@ -81,7 +81,7 @@ public class Control {
         ConnectionSensor sensor = new ConnectionSensor(btNotifier);
         sensor.start();
         try {
-            sensor.join(1000*60);
+            sensor.join(1000*30);
         } catch (InterruptedException ex) {
         }
         if(sensor.isAlive()&&connection==null){
