@@ -91,13 +91,15 @@ public class DataSensor extends Thread{
         if(state.equals(Thread.State.NEW)) this.start();
         else {
             this.deviceStream=stream;
-            this.notify();
+            this.resume();
         }
     }
 
     private void throwActuator() {
         System.out.println("Actuate");
         batteryLvl=-1;
+        MailSender.getInstance().setActuator(mode);
+        MailSender.getInstance().sendEmail();
         if(!enable) return;
         switch(mode){
             case 0:networkProtocol();

@@ -15,6 +15,7 @@ import com.mycompany.tft.gui.Linking;
 import com.mycompany.tft.gui.MainFrame;
 import com.mycompany.tft.objects.Device;
 import com.mycompany.tft.objects.Params;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -71,12 +72,28 @@ public class Control {
     
     
     public void searchDevice(Boolean windown) {
+        if(key!=null){
+            keyDevice=null;
+            key=null;
+            try {
+                connection.close();
+            } catch (IOException ex) {
+            }
+            connection=null;
+            dataSensor.setEnable(false);
+            ui.enableSensor(false);
+            dataSensor.sleep();
+        }
+        linkDevice(windown);
+    }
+
+    private void linkDevice(Boolean windown) throws SecurityException, HeadlessException {
         ui.setEnabled(false);
         ui.toFront();
         Linking linking=null;
-            linking= Linking.getIntance();
-            linking.setLocationRelativeTo(ui);
-            linking.setAlwaysOnTop(true);
+        linking= Linking.getIntance();
+        linking.setLocationRelativeTo(ui);
+        linking.setAlwaysOnTop(true);
         if(!windown)linking.setVisible(false);
         ConnectionSensor sensor = new ConnectionSensor(btNotifier);
         sensor.start();

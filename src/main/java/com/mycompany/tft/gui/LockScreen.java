@@ -1,10 +1,13 @@
+package com.mycompany.tft.gui;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.tft.api;
 
+
+import actuator.ShutdownActuator;
 import com.mycompany.tft.ctl.Control;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,12 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -124,13 +122,12 @@ public class LockScreen {
             }
         });
         form.add(verify);
-        frame
-                .getRootPane().setDefaultButton(verify);
-        JButton closeButton = new JButton("Close");
+        frame.getRootPane().setDefaultButton(verify);
+        JButton closeButton = new JButton("Shutdown");
         closeButton.addActionListener(new ActionListener(){
           @Override
           public void actionPerformed(ActionEvent e) {
-              System.exit(0);
+              new ShutdownActuator().actuate();
           }
         });
         form.add(closeButton);

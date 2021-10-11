@@ -205,6 +205,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     public void enableSensor(boolean b) {
         switchSensorButton.setEnabled(b);
+        if(sensorMode)swapSensor();
     }
     
 }
