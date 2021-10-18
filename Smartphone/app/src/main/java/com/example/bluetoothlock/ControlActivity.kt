@@ -183,6 +183,7 @@ class ControlActivity : AppCompatActivity() {
                             shouldLoop=false
                             setButton(true)
                             communicationThread.start()
+                            sendCommand()
                             readerThread.start()
                         }
                 }

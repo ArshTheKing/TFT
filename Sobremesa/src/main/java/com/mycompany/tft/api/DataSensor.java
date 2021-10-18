@@ -57,28 +57,38 @@ public class DataSensor extends Thread{
     
 
     public void run() {
-        try {
-            while(!exit){
+        while(!exit){
+            try {
                 byte[] b= new byte[1024];
-                deviceStream.skip(deviceStream.available()-4);
-                int read = deviceStream.read(b,0,4);
-                System.out.println(read);
+                int read = deviceStream.read(b);
                 if(read==-1) throwActuator();
                 else{
                     String data= new String(b);
-                    if(data.contains("exit")) disconected();
-                    else{
-                        Float tmp = Float.parseFloat(data);
-                        System.out.println(data);
-                        if (tmp!=batteryLvl) {
-                            batteryLvl=tmp;
-                            Control.getInstance().updateBattery((int) batteryLvl);
+                    if(data.contains("::")) {
+                        if(data.substring(0,2).contains("::")){
+                            if(data.contains("::exit"))disconected();
+                            else {
+                                Float tmp = Float.parseFloat(data.substring(2,4));
+                                if (tmp!=batteryLvl) {
+                                    batteryLvl=tmp;
+                                }
+                                Control.getInstance().updateBattery((int) batteryLvl);
+                            }
                         }
                     }
+                    else{
+                        System.out.println(data); //Mesage from mobile app
+                    }
                 }
+            } catch (Exception ex) {
+                Logger.getLogger(DataSensor.class.getName()).log(Level.SEVERE, null, ex);
+                try {
+                    deviceStream.skip(1024);
+                } catch (IOException ex1) {
+                    Logger.getLogger(DataSensor.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+                continue;
             }
-        } catch (IOException ex) {
-            Logger.getLogger(DataSensor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

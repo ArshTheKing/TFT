@@ -85,7 +85,6 @@ class ServerActivity : AppCompatActivity() {
         val handler = Handler(Looper.getMainLooper())
         val value = ByteArray(1024)
         try {
-
             val read = socket!!.inputStream.read(value)
             if (read == -1) makeNotification()
             else
