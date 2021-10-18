@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BluetoothLock</string>
+    <string name="disableText">Desactivar sensor</string>
+    <string name="enableText">Start</string>
+</resources>

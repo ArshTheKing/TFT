@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ServerActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/DeviceNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Nombre del dispositivo: "
+                android:background="@color/RoyalBlue"
+                android:textColor="@color/White"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/DeviceLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/DeviceNameLabel"
+                android:text="Unknow"
+                android:background="@color/CornflowerBlue"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/ClientLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                app:layout_constraintTop_toBottomOf="@id/DeviceNameLabel"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@id/DeviceNameLabel"
+                android:text="Dispositivo vinculado:"
+                android:background="@color/RoyalBlue"
+                android:textColor="@color/White"/>
+            <TextView
+                android:id="@+id/ClientDevice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                app:layout_constraintLeft_toRightOf="@id/ClientLabel"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ClientLabel"
+                android:text="Unknow"
+                android:background="@color/CornflowerBlue"
+                />
+
+            <TextView
+                android:id="@+id/BateryLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="El nivel de bateria es: "
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ClientLabel"
+                android:padding="6dp"
+                app:layout_constraintRight_toRightOf="@id/ClientLabel"
+                android:background="@color/RoyalBlue"
+                android:textColor="@color/White"/>
+
+            <TextView
+                android:id="@+id/RemoteBattery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Unknow"
+                android:padding="6dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="@id/ClientDevice"
+                app:layout_constraintTop_toBottomOf="@id/ClientDevice"
+                android:background="@color/CornflowerBlue"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="30dp"
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/ChatBox"
+                android:background="@color/Azure"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/SendButtom"/>
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/Message"
+                android:textColor="@color/Black"
+                app:layout_constraintTop_toTopOf="@id/SendButtom"
+                app:layout_constraintBottom_toBottomOf="@id/SendButtom"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/SendButtom"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:hint="Type a message"
+                android:maxLength="256"/>
+            <Button
+                android:id="@+id/SendButtom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
