@@ -1,13 +1,14 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.extras
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import com.example.bluetoothlock.R
+import com.example.bluetoothlock.objects.Message
 
 class MessageAdapter(val context: Context, val msgList:ArrayList<Message>): Adapter<RecyclerView.ViewHolder>(){
 
@@ -28,7 +29,7 @@ class MessageAdapter(val context: Context, val msgList:ArrayList<Message>): Adap
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         var message=msgList[position]
 
-        if(holder.javaClass==SentViewHolder::class.java){
+        if(holder.javaClass== SentViewHolder::class.java){
             var viewHolder = holder as SentViewHolder
             holder.sentMessage.text= message.content
         } else{

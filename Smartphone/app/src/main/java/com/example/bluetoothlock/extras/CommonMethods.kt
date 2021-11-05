@@ -1,4 +1,4 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.extras
 
 import android.app.Activity
 import android.app.Notification
@@ -14,6 +14,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import com.example.bluetoothlock.R
 
 class CommonMethods {
 

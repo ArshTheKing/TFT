@@ -1,21 +1,25 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.activitys
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.textclassifier.TextClassificationSessionFactory
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bluetoothlock.extras.CommonMethods
+import com.example.bluetoothlock.extras.MessageAdapter
+import com.example.bluetoothlock.R
+import com.example.bluetoothlock.objects.Message
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -47,7 +51,7 @@ class ServerActivity : AppCompatActivity() {
 
         adapter = CommonMethods().getAdapter(this)
         batteryText=findViewById(R.id.RemoteBattery)
-        findViewById<TextView>(R.id.DeviceLabel).text=adapter.name
+        findViewById<TextView>(R.id.DeviceLabel).text= adapter.name
         remoteLabel=findViewById(R.id.ClientDevice)
         acceptThread = AcceptThread()
         acceptThread.start()
@@ -56,8 +60,6 @@ class ServerActivity : AppCompatActivity() {
         msgBox=findViewById(R.id.Message)
         sendButton = findViewById(R.id.SendButtom)
         msgList= ArrayList()
-        msgList.add(Message("hey",true))
-        msgList.add(Message("hey",false))
         msgAdapter= MessageAdapter(this,msgList)
         chatBox.layoutManager=LinearLayoutManager(this)
         chatBox.adapter=msgAdapter
@@ -66,12 +68,27 @@ class ServerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        working =false
+        socket?.close()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        working=false
+        socket?.close()
+        val a = Intent(Intent.ACTION_MAIN)
+        a.addCategory(Intent.CATEGORY_HOME)
+        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(a)
+    }
     private fun sendText() {
         val text = msgBox!!.text.toString()
         msgList.add(Message(text,true)!!)
         msgAdapter.notifyDataSetChanged()
         msgBox!!.setText("")
-        if (socket!=null){
+        if (socket !=null){
             socket!!.outputStream.write(text.toByteArray())
         }
     }
@@ -90,23 +107,24 @@ class ServerActivity : AppCompatActivity() {
             else
             {
                 val data = String(value)
-                if (data.contains("::")) {
-                    if (data.substring(2).contains("::")) handler.post{readText(data)}
-                    else{
-                        if (data.contains("::exit")) disconnect()
-                        else {
-                            handler.post {
-                                val level = data.substring(2).toFloat()
-                                val temp = "$level %"
-                                if (temp != battery) {
-                                    battery = temp
-                                    batteryText!!.text = battery
-                                }
+                if (!data.contains("::")) handler.post { readText(data) }
+                else {
+                    if (data.contains("::exit")) disconnect()
+                    else {
+                        handler.post {
+                            var temp = data.substring(2)
+                            if(temp.contains("::")) {
+                                temp=temp.substring(0,temp.indexOf("::"))
+                            }
+                            val level =temp.toFloat()
+                            val text = "$level %"
+                            if (text != battery) {
+                                battery = text
+                                batteryText!!.text = battery
                             }
                         }
                     }
                 }
-                else handler.post { readText(data) }
             }
         }catch (e:IOException){
             handler.post {
@@ -116,7 +134,6 @@ class ServerActivity : AppCompatActivity() {
             disconnect()
         }
         Thread.sleep(200)
-        println(battery)
     }
 
     private fun disconnect() {
@@ -125,7 +142,7 @@ class ServerActivity : AppCompatActivity() {
         } catch (e: IOException) {
             Log.e(TAG, "Could not close the connect socket", e)
         }
-        socket=null
+        socket =null
         makeNotification()
         Handler(Looper.getMainLooper()).post{
             Toast.makeText(this,"DESCONECTADO",Toast.LENGTH_SHORT)
@@ -133,18 +150,13 @@ class ServerActivity : AppCompatActivity() {
     }
 
     private fun makeNotification() {
-        acceptThread.shouldLoop=true
         socket=null
+        acceptThread.shouldLoop=true
         CommonMethods().sendNofication(remote,this)
     }
 
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        disconnect()
-        working=false
-        this.finish()
-    }
+
 
     private inner class AcceptThread : Thread() {
 
@@ -166,7 +178,7 @@ class ServerActivity : AppCompatActivity() {
                         remote= socket!!.remoteDevice.name
                         val handler = Handler(Looper.getMainLooper())
                         handler.post {
-                            batteryText!!.text=battery
+                            batteryText!!.text= battery
                             remoteLabel!!.text=remote
                         }
                         CommunicationThread().start()
@@ -182,7 +194,7 @@ class ServerActivity : AppCompatActivity() {
         override fun run() {
             super.run()
                 while(working){
-                    if (socket!=null) work()
+                    if (socket !=null) work()
                 }
         }
 

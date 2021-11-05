@@ -115,6 +115,7 @@ public class Control {
     public void saveConfig(String user, String pass, String option) {
         try {
             this.params=new Params(user, pass, option);
+            this.dataSensor.setMode(Integer.parseInt(option));
             FileHandler.writeConfig(user, pass, option);
         } catch (IOException ex) {
         }

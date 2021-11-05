@@ -15,10 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BluetoothLock">
         <activity
-            android:name=".ServerActivity"
+            android:name=".activitys.ServerActivity"
             android:exported="true" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activitys.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ControlActivity"
+            android:name=".activitys.ControlActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 

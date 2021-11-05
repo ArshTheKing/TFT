@@ -1,10 +1,13 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.activitys
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.bluetoothlock.extras.CommonMethods
+import com.example.bluetoothlock.R
+import com.example.bluetoothlock.objects.CustomDevice
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.refreshIcon).setOnClickListener { pairedDeviceList() }
         pairedDeviceList()
         findViewById<Button>(R.id.switchMode).setOnClickListener(){
-            val intent= Intent(this,ServerActivity::class.java)
+            val intent= Intent(this, ServerActivity::class.java)
             startActivity(intent)
 
         }
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1,list)
         dev.adapter=adapter
         dev.onItemClickListener= AdapterView.OnItemClickListener{ _, _, position, _ ->
-            val device:CustomDevice = list[position]
+            val device: CustomDevice = list[position]
             val intent = Intent(this, ControlActivity::class.java)
             intent.putExtra(EXTRA_ADDRESS,device.dev.address)
             intent.putExtra(EXTRA_NAME,device.dev.name)

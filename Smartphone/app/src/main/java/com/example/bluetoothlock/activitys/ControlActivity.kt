@@ -1,7 +1,13 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.activitys
 
-import android.bluetooth.*
-import android.os.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -10,9 +16,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bluetoothlock.R
+import com.example.bluetoothlock.extras.CommonMethods
+import com.example.bluetoothlock.extras.MessageAdapter
+import com.example.bluetoothlock.objects.Message
 import java.io.IOException
 import java.util.*
-import kotlin.coroutines.*
+
 
 class ControlActivity : AppCompatActivity() {
 
@@ -39,23 +49,24 @@ class ControlActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("nuevo")
         setContentView(R.layout.control_layout)
-        myself=this
+        myself =this
         adapter = CommonMethods().getAdapter(this)
-        address= intent.getStringExtra(MainActivity.EXTRA_ADDRESS)!!
+        address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS)!!
         var devName = intent.getStringExtra(MainActivity.EXTRA_NAME)!!
         findViewById<TextView>(R.id.Device).text=devName
         setButton(false)
         acceptThread = AcceptThread()
+        println(acceptThread.isAlive.toString()+"previo")
         acceptThread.start()
+        println(acceptThread.isAlive.toString()+"post")
         communicationThread = CommunicationThread()
         readerThread=ReaderThread()
         chatBox=findViewById(R.id.ChatBox)
         msgBox=findViewById(R.id.Message)
         sendButton = findViewById(R.id.SendButtom)
         msgList= ArrayList()
-        msgList.add(Message("hey",true))
-        msgList.add(Message("hey",false))
         msgAdapter= MessageAdapter(this,msgList)
         chatBox.layoutManager= LinearLayoutManager(this)
         chatBox.adapter=msgAdapter
@@ -67,6 +78,7 @@ class ControlActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onBackPressed() {
+        super.onBackPressed()
         disconect()
     }
 
@@ -74,6 +86,10 @@ class ControlActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         disconect()
+        val a = Intent(Intent.ACTION_MAIN)
+        a.addCategory(Intent.CATEGORY_HOME)
+        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(a)
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -125,7 +141,7 @@ class ControlActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected fun sendCommand(){
             try {
-                socket?.outputStream?.write(("::"+CommonMethods().loadBattery(myself)).toByteArray())
+                socket?.outputStream?.write(("::"+ CommonMethods().loadBattery(myself)).toByteArray())
             } catch (e: Exception){
             }
             Thread.sleep(2000)
@@ -138,15 +154,15 @@ class ControlActivity : AppCompatActivity() {
                 val read = socket!!.inputStream.read(value)
                 if(read>0)readText(value)
             } catch(e:Exception){
-                disconect()
+                socket=null
+                acceptThread.shouldLoop=true
             }
-
     }
 
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private fun disconect(){
-        if (socket !=null) {
+        if (socket!=null) {
             try {
                 socket!!.outputStream.write("::exit".toByteArray())
                 socket!!.close()
@@ -154,11 +170,12 @@ class ControlActivity : AppCompatActivity() {
 
             }
         }
-        working=false
-        socket=null
+        working =false
+        socket =null
         Handler(Looper.getMainLooper()).post{Toast.makeText(this,"disconected", Toast.LENGTH_LONG).show()}
         this.finish()
     }
+
     private inner class AcceptThread : Thread() {
         var shouldLoop = true
         @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -169,22 +186,22 @@ class ControlActivity : AppCompatActivity() {
                         val fromString = UUID.fromString("7f49f6fa-12e5-11ec-82a8-0242ac130003")
                         socket = device.createRfcommSocketToServiceRecord(fromString)
                         BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
-                        if(socket!=null)
+                        if(socket !=null)
                             try{
                                 socket!!.connect()
                             }catch (e:IOException){
                                 socket!!.close()
                                 println("ENTRA")
-                                socket=null
+                                socket =null
                                 continue
                             }
-                        if (socket!=null&&socket!!.isConnected) {
+                        if (socket !=null&& socket!!.isConnected) {
                             println("Conectado y funcional")
                             shouldLoop=false
                             setButton(true)
-                            communicationThread.start()
+                            if(!!communicationThread.isAlive) communicationThread.start()
                             sendCommand()
-                            readerThread.start()
+                            if (!!readerThread.isAlive) readerThread.start()
                         }
                 }
             }
@@ -197,7 +214,7 @@ class ControlActivity : AppCompatActivity() {
         override fun run() {
             super.run()
             while(working){
-                if (socket!=null)
+                if (socket !=null)
                     if(send)sendCommand()
                     else send=true
             }
@@ -208,7 +225,7 @@ class ControlActivity : AppCompatActivity() {
         override fun run() {
             super.run()
             while(working){
-                if (socket!=null) readCommand()
+                if (socket !=null) readCommand()
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.bluetoothlock
+package com.example.bluetoothlock.objects
 
 class Message{
 
